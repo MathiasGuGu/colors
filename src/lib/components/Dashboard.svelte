@@ -8,7 +8,8 @@
 		MessageCircleCode,
 		Package
 	} from 'lucide-svelte';
-	import { chroma } from 'chroma-js';
+	import chroma from 'chroma-js';
+
 	export let colors: any;
 	export let backgroundColor: string;
 </script>
