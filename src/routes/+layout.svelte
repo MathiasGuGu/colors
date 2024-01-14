@@ -3,9 +3,7 @@
 </script>
 
 <nav>
-	<div
-		class="  shadow-lg w-screen border border-zinc-200 h-14 flex items-center justify-between px-12"
-	>
+	<div class="  w-screen h-14 flex items-center justify-between px-12 font-light">
 		<h2 class=" font-thin">Color</h2>
 		<div class="flex items-center gap-8 text-sm">
 			<div class="hover:underline">Palette</div>
