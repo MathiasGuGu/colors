@@ -43,10 +43,41 @@
 
 <div class="w-full h-auto flex items-center justify-center">
 	<section
-		class="w-full h-96 rounded-lg max-w-7xl flex flex-col"
+		class="w-full h-auto rounded-lg max-w-7xl flex flex-col"
 		style={`
 		background-color: ${backgroundColor};
 		color: ${backgroundContent.darkest};
 		`}
-	></section>
+	>
+		<!--Start of hero section-->
+		<div class="w-full h-auto mt-12 flex items-center justify-center">
+			<div
+				class="w-auto px-6 h-80 rounded-full flex flex-col max-w-3xl items-center justify-center"
+				style={`color: ${backgroundContent.darker}`}
+			>
+				<p class="w-auto text-center font-bold text-3xl">
+					Hello! My name is User! Welcome to my portfolio
+				</p>
+				<p class="text-center max-w-2xl font-light">
+					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi voluptate, nam
+					similique ipsam cumque adipisci saepe et sequi odio provident minus deleniti fuga
+					consequatur tenetur!
+				</p>
+				<div class="flex items-center justify-center gap-6 mt-6">
+					<button
+						class="w-32 h-10 rounded-lg font-thin"
+						style={`background-color: ${primaryColor}; color: ${primaryContent.darkest}`}
+					>
+						Contact
+					</button>
+					<button
+						class="w-32 h-10 rounded-lg font-thin"
+						style={`background-color: ${secondaryColor}; color: ${secondaryContent.darkest}`}
+					>
+						Projects
+					</button>
+				</div>
+			</div>
+		</div>
+	</section>
 </div>

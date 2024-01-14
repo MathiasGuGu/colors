@@ -5,42 +5,9 @@
 	import Colorandcontentblock from '$lib/components/colorandcontentblock.svelte';
 	import PaletteTypeButton from '$lib/components/paletteTypeButton.svelte';
 	import ShowcaseTypeButton from '$lib/components/showcaseTypeButton.svelte';
+	import ExportModal from '$lib/components/exportModal.svelte';
 	import chroma from 'chroma-js';
 	import { Dices, Share2, ArrowLeft, ArrowRight, Moon, Sun } from 'lucide-svelte';
-
-	interface Color {
-		default: string;
-		'50': string;
-		'100': string;
-		'200': string;
-		'300': string;
-		'400': string;
-		'500': string;
-		'600': string;
-		'700': string;
-		'800': string;
-		'900': string;
-		'950': string;
-	}
-
-	interface ColorVarient {
-		darkest: string;
-		darker: string;
-		dark: string;
-	}
-
-	interface ColorPalette {
-		primary: Color;
-		primaryContent: ColorVarient;
-		secondary: Color;
-		secondaryContent: ColorVarient;
-		tertiary: Color;
-		tertiaryContent: ColorVarient;
-		backgroundColor: string;
-		backgroundContent: ColorVarient;
-		foregroundColor: string;
-		foregroundContent: ColorVarient;
-	}
 
 	enum colorPaletteEnum {
 		monochrome = 'monochrome',
@@ -58,7 +25,7 @@
 	}
 
 	let mode = 'dark';
-
+	let isExportModalOpen: boolean = false;
 	let colorPaletteStyle = colorPaletteEnum.monochrome;
 	let showcaseType = showcaseTypeEnum.dashboard;
 	let colors: ColorPalette | undefined = undefined;
@@ -348,7 +315,12 @@
 		<button>
 			<ArrowRight size={24} strokeWidth={1} />
 		</button>
-		<button class="w-fit px-3 h-10 bg-white-100 flex items-center justify-center gap-2 rounded">
+		<button
+			on:click={() => {
+				isExportModalOpen = true;
+			}}
+			class="w-fit px-3 h-10 bg-white-100 flex items-center justify-center gap-2 rounded"
+		>
 			<Share2 size={16} strokeWidth={1} /> Export
 		</button>
 	</div>
@@ -397,7 +369,7 @@
 	</div>
 </section>
 
-<section>
+<section class="my-12">
 	{#if showcaseType === showcaseTypeEnum.dashboard}
 		<Dashboard
 			{backgroundColor}
@@ -426,5 +398,9 @@
 			quadContent={c.quad ? getContentColors(c.quad) : null}
 		/>
 	{/if}
-	{#if showcaseType === showcaseTypeEnum.ecommerce}{/if}
+	{#if showcaseType === showcaseTypeEnum.ecommerce}
+		not available yet
+	{/if}
 </section>
+
+<ExportModal bind:isModalOpen={isExportModalOpen}></ExportModal>
