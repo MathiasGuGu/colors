@@ -8,6 +8,7 @@
 	import ExportModal from '$lib/components/exportModal.svelte';
 	import chroma from 'chroma-js';
 	import { Dices, Share2, ArrowLeft, ArrowRight, Moon, Sun } from 'lucide-svelte';
+	import type { ColorPalette } from '$lib/constructors/ColorsInterface';
 
 	enum colorPaletteEnum {
 		monochrome = 'monochrome',
@@ -15,7 +16,8 @@
 		triadic = 'triadic',
 		tetradic = 'tetradic',
 		complementory = 'complementory',
-		bezier = 'bezier'
+		bezier = 'bezier',
+		null = ''
 	}
 
 	enum showcaseTypeEnum {
@@ -39,6 +41,15 @@
 		tertiary: false,
 		background: false,
 		foreground: false
+	};
+
+	let handleRandomizeColors = (mode: colorPaletteEnum) => {
+		colorPaletteStyle = colorPaletteEnum.null;
+		if (mode === colorPaletteStyle) {
+			colorPaletteStyle = mode;
+		} else {
+			colorPaletteStyle = mode;
+		}
 	};
 
 	// Lightens a color by 2.5
@@ -252,7 +263,7 @@
 		};
 	};
 
-	let c: any;
+	let c = generateAnalogousColors();
 
 	$: {
 		if (colorPaletteStyle === colorPaletteEnum.monochrome) {
@@ -274,6 +285,45 @@
 			c = generateColorsUsingBezierCurve();
 		}
 	}
+
+	let generateColorPaletteFromColors = (): ColorPalette => {
+		// create scale for every color
+
+		if (!c.primary) {
+			throw new Error('Primary color is not defined');
+		}
+
+		let Color: ColorPalette = {};
+		let primaryScale;
+		if (c.primary) {
+			primaryScale = getColorScale(c.primary);
+			Color.primary = primaryScale;
+			Color.primaryContent = getContentColors(c.primary);
+		}
+		let secondaryScale;
+		if (c.secondary) {
+			secondaryScale = getColorScale(c.secondary);
+			Color.secondary = secondaryScale;
+			Color.secondaryContent = getContentColors(c.secondary);
+		}
+
+		let tertiaryScale;
+		if (c.tertiary) {
+			tertiaryScale = getColorScale(c.tertiary);
+			Color.tertiary = tertiaryScale;
+			Color.tertiaryContent = getContentColors(c.tertiary);
+		}
+
+		let quadScale;
+		if (c.quad) {
+			quadScale = getColorScale(c.quad);
+			Color.quad = quadScale;
+			Color.quadContent = getContentColors(c.quad);
+		}
+
+		Color.backgroundColor = backgroundColor;
+		return Color;
+	};
 </script>
 
 <section
@@ -303,7 +353,7 @@
 		</button>
 		<button
 			on:click={() => {
-				colorPaletteStyle = colorPaletteEnum.monochrome;
+				handleRandomizeColors(colorPaletteStyle);
 			}}
 			class="w-10 h-10 flex items-center justify-center rounded"
 		>
@@ -403,4 +453,5 @@
 	{/if}
 </section>
 
-<ExportModal bind:isModalOpen={isExportModalOpen}></ExportModal>
+<ExportModal ColorPalette={generateColorPaletteFromColors()} bind:isModalOpen={isExportModalOpen}
+></ExportModal>

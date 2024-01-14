@@ -24,12 +24,26 @@ export interface ColorPalette {
 	primaryContent: ColorVarient;
 	secondary: Color;
 	secondaryContent: ColorVarient;
-	tertiary: Color;
-	tertiaryContent: ColorVarient;
+	tertiary?: Color;
+	tertiaryContent?: ColorVarient;
+	quad?: Color;
+	quadContent?: ColorVarient;
 	backgroundColor: string;
 	backgroundContent: ColorVarient;
-	foregroundColor: string;
-	foregroundContent: ColorVarient;
+	foregroundColor?: string;
+	foregroundContent?: ColorVarient;
+}
+
+export enum ColorExportType {
+	hsl = 'hsl',
+	hex = 'hex',
+	rgb = 'rgb'
+}
+
+export enum ColorExportFormat {
+	tailwind = 'tailwind',
+	css = 'css',
+	shades = 'shades'
 }
 
 export let generateRandomTheme = (): ColorPalette => {
