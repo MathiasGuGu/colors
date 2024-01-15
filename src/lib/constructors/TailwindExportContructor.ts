@@ -36,34 +36,78 @@ const constructTailwindColorString = (color: Color | ColorVarient, option: strin
 };
 
 export const constructTailwindExport = (color: ColorPalette, option: string = 'hsl') => {
-	let PrimaryString = constructTailwindColorString(color.primary, option);
-	let SecondaryString = constructTailwindColorString(color.secondary, option);
-	let TertiaryString = constructTailwindColorString(color.tertiary, option);
-	let PrimaryContentString = constructTailwindColorString(color.primaryContent, option);
-	let SecondaryContentString = constructTailwindColorString(color.secondaryContent, option);
-	let TertiaryContentString = constructTailwindColorString(color.tertiaryContent, option);
+	let primaryString = '';
+	let secondaryString = '';
+	let tertiaryString = '';
+	let primaryContentString = '';
+	let secondaryContentString = '';
+	let tertiaryContentString = '';
+	let quadString = '';
+	let quadContentString = '';
+
+	let exportString = ``;
+
+	if (color.primary) {
+		primaryString = constructTailwindColorString(color.primary, option);
+		primaryContentString = constructTailwindColorString(color.primaryContent, option);
+
+		exportString += `
+            primary: {
+                ${primaryString}
+            },
+            primaryContent: {
+                ${primaryContentString}
+            },
+        `;
+	}
+
+	if (color.secondary) {
+		secondaryString = constructTailwindColorString(color.secondary, option);
+		secondaryContentString = constructTailwindColorString(color.secondaryContent, option);
+
+		exportString += `
+            secondary: {
+                ${secondaryString}
+            },
+            secondaryContent: {
+                ${secondaryContentString}
+            },
+        `;
+	}
+	if (color.tertiary) {
+		tertiaryString = constructTailwindColorString(color.tertiary, option);
+		tertiaryContentString = constructTailwindColorString(color.tertiaryContent, option);
+
+		exportString += `
+            tertiary: {
+                ${tertiaryString}
+            },
+            tertiaryContent: {
+                ${tertiaryContentString}
+            },
+        `;
+	}
+
+	if (color.quad) {
+		quadString = constructTailwindColorString(color.quad, option);
+		quadContentString = constructTailwindColorString(color.quadContent, option);
+
+		exportString += `
+            quad: {
+                ${quadString}
+            },
+            quadContent: {
+                ${quadContentString}
+            },
+        `;
+	}
+
+	console.log(exportString);
 
 	let TailwindExportString = `
         extend: {
             colors: {
-                primary: {
-                    ${PrimaryString}
-                },
-                secondary: {
-                    ${SecondaryString}
-                },
-                tertiary: {
-                    ${TertiaryString}
-                },
-                primaryContent: {
-                    ${PrimaryContentString}
-                },
-                secondaryContent: {
-                    ${SecondaryContentString}
-                },
-                tertiaryContent: {
-                    ${TertiaryContentString}
-                }
+                ${exportString}
             }
         }
     `;

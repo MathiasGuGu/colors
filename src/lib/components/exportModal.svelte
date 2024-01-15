@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { constructTailwindExport } from '$lib/constructors/TailwindExportContructor';
 	import { constructCSSExport } from '$lib/constructors/CSSExportConstructor';
-	import { generateRandomTheme } from '$lib/constructors/ColorsInterface';
+	import { generateRandomTheme, type ColorPalette } from '$lib/constructors/ColorsInterface';
 	import { ColorExportType, ColorExportFormat } from '$lib/constructors/ColorsInterface';
 	import { X } from 'lucide-svelte';
 
 	export let isModalOpen = true;
-	export let ColorPalette;
-
-	console.log(ColorPalette);
+	export let ColorPalette: ColorPalette;
 
 	let exportString = '';
 	let exportMode = ColorExportFormat.css;
@@ -80,12 +78,20 @@
 			</div>
 			<!--END Export Options-->
 			<div class="w-full h-auto flex flex-col px-3 py-3">
-				<div class="bg-white-100 px-4 py-2 border-white-200 border-b-[1px]">
+				<div class="bg-white-100 px-4 py-2 border-white-200 border-b-[1px] relative rounded-t-lg">
 					{#if exportMode === ColorExportFormat.css}
 						<p class="text-xs font-light">style.css</p>
 					{:else if exportMode === ColorExportFormat.tailwind}
 						<p class="text-xs font-light">Tailwind.config.js</p>
 					{/if}
+
+					<button
+						on:click={() => {
+							navigator.clipboard.writeText(exportString);
+						}}
+						class="absolute right-6 -top-2 text-xs bg-white-50 px-4 py-1 rounded-full border-[1px] border-white-100 shadow-lg hover:border hover:border-green-200"
+						>Copy</button
+					>
 				</div>
 				<code class="w-full h-auto text-sm font-thin bg-white-100 rounded-b-lg overflow-scroll">
 					<pre>{exportString}</pre>

@@ -263,6 +263,7 @@
 		};
 	};
 
+	// TODO: Figure out how to type C correctly
 	let c = generateAnalogousColors();
 
 	$: {
@@ -293,7 +294,7 @@
 			throw new Error('Primary color is not defined');
 		}
 
-		let Color: ColorPalette = {};
+		let Color: ColorPalette | any = {};
 		let primaryScale;
 		if (c.primary) {
 			primaryScale = getColorScale(c.primary);
@@ -338,7 +339,7 @@
 		<PaletteTypeButton bind:colorPaletteStyle id={colorPaletteEnum.complementory} />
 		<PaletteTypeButton bind:colorPaletteStyle id={colorPaletteEnum.bezier} />
 	</div>
-	<div class="flex gap-12">
+	<div class="flex gap-8">
 		<button
 			on:click={() => {
 				mode = mode === 'dark' ? 'light' : 'dark';

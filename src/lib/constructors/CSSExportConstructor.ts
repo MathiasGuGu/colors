@@ -18,19 +18,19 @@ const constructTailwindColorString = (
 	for (const [key, value] of Object.entries(color)) {
 		switch (option) {
 			case ColorExportType.hex:
-				string += `--${name}-${key}: ${chroma(value).hex()},
+				string += `--${name}-${key}: ${chroma(value).hex()};
                 `;
 				break;
 			case ColorExportType.rgb:
-				string += `--${name}-${key}: rgb(${chroma(value).rgb()}),
+				string += `--${name}-${key}: rgb(${chroma(value).rgb()});
                 `;
 				break;
 			case ColorExportType.hsl:
-				string += `--${name}-${key}: hsl(${chroma(value).hsl()}),
+				string += `--${name}-${key}: hsl(${chroma(value).hsl()});
                 `;
 				break;
 			default:
-				string += `--${name}-${key}: ${chroma(value).hex()},
+				string += `--${name}-${key}: ${chroma(value).hex()};
                 `;
 				break;
 		}
@@ -50,6 +50,7 @@ export const constructCSSExport = (color: ColorPalette, option: string = 'hsl') 
 	let SecondaryContentString;
 	let TertiaryString;
 	let TertiaryContentString;
+
 	if (color.primary) {
 		PrimaryString = constructTailwindColorString(color.primary, option, 'primary');
 		PrimaryContentString = constructTailwindColorString(
