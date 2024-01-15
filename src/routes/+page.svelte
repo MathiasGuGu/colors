@@ -8,8 +8,12 @@
 	import DropdownOptions from '$lib/components/dropdownOptions.svelte';
 	import ExportModal from '$lib/components/exportModal.svelte';
 	import chroma from 'chroma-js';
-	import { Dices, Share2, ArrowLeft, ArrowRight, Moon, Sun } from 'lucide-svelte';
+	import { Dices, Share2, ArrowLeft, ArrowRight, Moon, Sun, AlertCircle } from 'lucide-svelte';
 	import type { Color, ColorPalette } from '$lib/constructors/ColorsInterface';
+
+	let color_store = [];
+	let current_color_store = 0;
+	let exportPalette: ColorPalette | undefined = undefined;
 
 	enum colorPaletteEnum {
 		random = 'random',
@@ -30,7 +34,7 @@
 
 	let mode = 'dark';
 	let isExportModalOpen: boolean = false;
-	let colorPaletteStyle = colorPaletteEnum.monochrome;
+	let colorPaletteStyle = colorPaletteEnum.random;
 
 	let showcaseType = showcaseTypeEnum.dashboard;
 	let colors: ColorPalette | undefined = undefined;
@@ -72,7 +76,6 @@
 		let c = chroma(color).darken(3).hex();
 		return c;
 	};
-
 	// Generates a color scale of 11 colors
 	let getColorScale = (color: string): Color => {
 		/* 
@@ -358,39 +361,35 @@
 		};
 		let colorsObject: any = {};
 
-		for (let color in colors) {
-			colorsObject[colorsName[color]] = colors[color];
+		// When looping over the array of colors, I need to check if the color currently being looped over is locked
+		// If it is locked, I need to keep the old value.
+		// the problem is that if it is locked, i need to push the current looping color to the next index and check again
+
+		// PROBLEM FIXED!
+
+		for (let color of colors) {
+			if (colorLocks.primary) {
+				colors[0] = c.primary;
+			}
+			if (colorLocks.secondary) {
+				colors[1] = c.secondary;
+			}
+			if (colorLocks.tertiary) {
+				colors[2] = c.tertiary;
+			}
+			if (colorLocks.quad) {
+				colors[3] = c.quad;
+			}
+		}
+
+		for (let i = 0; i < colors.length; i++) {
+			colorsObject[colorsName[i]] = colors[i];
 		}
 
 		return colorsObject;
 	};
 
 	// TODO: Figure out how to type C correctly
-	c = generateRandomColorPalette(4);
-
-	$: {
-		if (colorPaletteStyle === colorPaletteEnum.random) {
-			c = generateRandomColorPalette(4);
-		}
-		if (colorPaletteStyle === colorPaletteEnum.monochrome) {
-			c = generateMonochromeColors();
-		}
-		if (colorPaletteStyle === colorPaletteEnum.analogous) {
-			c = generateAnalogousColors();
-		}
-		if (colorPaletteStyle === colorPaletteEnum.triadic) {
-			c = generateTriadicColors();
-		}
-		if (colorPaletteStyle === colorPaletteEnum.tetradic) {
-			c = generateTetradicColors();
-		}
-		if (colorPaletteStyle === colorPaletteEnum.complementory) {
-			c = generateComplementoryColors();
-		}
-		if (colorPaletteStyle === colorPaletteEnum.bezier) {
-			c = generateColorsUsingBezierCurve();
-		}
-	}
 
 	let generateColorPaletteFromColors = (): ColorPalette => {
 		// create scale for every color
@@ -430,6 +429,109 @@
 		Color.backgroundColor = backgroundColor;
 		return Color;
 	};
+
+	/* 
+	
+		Handle color palettes in localstorage for users to be able to see previous color palettes. Up to three back.
+
+	*/
+
+	let handleSetColorPalette = () => {
+		let colorPaletteSaveString = `${c.primary ? c.primary : ''}-${c.secondary ? c.secondary : ''}-${
+			c.tertiary ? c.tertiary : ''
+		}-${c.quad ? c.quad : ''}-${backgroundColor ? backgroundColor : ''}`;
+
+		if (color_store.length > 5) {
+			color_store.shift();
+		}
+
+		color_store.push(colorPaletteSaveString);
+
+		current_color_store = color_store.length - 1;
+	};
+
+	enum paletteDirectionEnum {
+		left = 'left',
+		right = 'right',
+		start = 'start'
+	}
+
+	let handleLoadColorPalette = (direction: paletteDirectionEnum) => {
+		if (direction === paletteDirectionEnum.left) {
+			if (current_color_store <= 0) {
+				current_color_store = 0;
+			} else {
+				current_color_store -= 1;
+			}
+		}
+		if (direction === paletteDirectionEnum.right) {
+			if (current_color_store === color_store.length - 1) {
+				current_color_store = color_store.length - 1;
+			} else {
+				current_color_store += 1;
+			}
+		}
+
+		if (direction === paletteDirectionEnum.start) {
+			current_color_store = color_store.length - 1;
+		}
+
+		if (color_store.length < 0) {
+			return;
+		}
+
+		let colorPaletteSaveArray = color_store[current_color_store].split('-');
+
+		let primary = colorPaletteSaveArray[0];
+		let secondary = colorPaletteSaveArray[1];
+		let tertiary = colorPaletteSaveArray[2];
+		let quad = colorPaletteSaveArray[3];
+
+		c.primary = primary;
+		c.secondary = secondary;
+		c.tertiary = tertiary;
+		c.quad = quad;
+
+		console.log(c);
+	};
+
+	$: {
+		if (colorPaletteStyle === colorPaletteEnum.random) {
+			c = generateRandomColorPalette(4);
+			handleSetColorPalette();
+			exportPalette = generateColorPaletteFromColors();
+		}
+		if (colorPaletteStyle === colorPaletteEnum.monochrome) {
+			c = generateMonochromeColors();
+			handleSetColorPalette();
+			exportPalette = generateColorPaletteFromColors();
+		}
+		if (colorPaletteStyle === colorPaletteEnum.analogous) {
+			c = generateAnalogousColors();
+			handleSetColorPalette();
+			exportPalette = generateColorPaletteFromColors();
+		}
+		if (colorPaletteStyle === colorPaletteEnum.triadic) {
+			c = generateTriadicColors();
+			handleSetColorPalette();
+			exportPalette = generateColorPaletteFromColors();
+		}
+		if (colorPaletteStyle === colorPaletteEnum.tetradic) {
+			c = generateTetradicColors();
+			handleSetColorPalette();
+			exportPalette = generateColorPaletteFromColors();
+		}
+		if (colorPaletteStyle === colorPaletteEnum.complementory) {
+			c = generateComplementoryColors();
+			handleSetColorPalette();
+			exportPalette = generateColorPaletteFromColors();
+		}
+		if (colorPaletteStyle === colorPaletteEnum.bezier) {
+			c = generateColorsUsingBezierCurve();
+			handleSetColorPalette();
+			exportPalette = generateColorPaletteFromColors();
+		}
+	}
 </script>
 
 <section
@@ -524,17 +626,29 @@
 			{/if}
 		</button>
 		<button
-			on:click={() => {
+			on:click={(e) => {
 				handleRandomizeColors(colorPaletteStyle);
 			}}
 			class="w-10 h-10 flex items-center justify-center rounded"
 		>
 			<Dices size={24} strokeWidth={1} />
 		</button>
-		<button>
+		<button
+			on:click={(e) => {
+				e.preventDefault();
+				handleLoadColorPalette(paletteDirectionEnum.left);
+				exportPalette = generateColorPaletteFromColors();
+			}}
+		>
 			<ArrowLeft size={24} strokeWidth={1} />
 		</button>
-		<button>
+		<button
+			on:click={(e) => {
+				e.preventDefault();
+				handleLoadColorPalette(paletteDirectionEnum.right);
+				exportPalette = generateColorPaletteFromColors();
+			}}
+		>
 			<ArrowRight size={24} strokeWidth={1} />
 		</button>
 		<button
@@ -547,6 +661,18 @@
 		</button>
 	</div>
 </section>
+
+<section class="w-full h-auto flex items-center justify-center mt-12">
+	{#if colorPaletteStyle !== colorPaletteEnum.random && colorPaletteStyle !== colorPaletteEnum.bezier}
+		<div class="w-full h-12 flex items-center max-w-7xl text-blue-500">
+			<div class="bg-blue-100 px-4 flex py-2 rounded-lg text-xs">
+				<AlertCircle size={16} strokeWidth={2} class="mr-2" />
+				Locking colors will have not effect as all colors are based on the primary
+			</div>
+		</div>
+	{/if}
+</section>
+
 {#if c}
 	<section class="w-full h-auto flex gap-6 py-5 font-thin px-20">
 		{#if c.primary}
@@ -575,7 +701,7 @@
 		{/if}
 		{#if c.quad}
 			<Colorandcontentblock
-				lock={colorLocks.quad}
+				bind:lock={colorLocks.quad}
 				name="Quad"
 				primary={c.quad}
 				content={getContentColors(c.quad)}
@@ -583,7 +709,7 @@
 		{/if}
 		{#if backgroundColor}
 			<Colorandcontentblock
-				lock={colorLocks.background}
+				bind:lock={colorLocks.background}
 				name="Background"
 				primary={backgroundColor}
 				content={backgroundContent}
@@ -634,5 +760,4 @@
 	{/if}
 </section>
 
-<ExportModal ColorPalette={generateColorPaletteFromColors()} bind:isModalOpen={isExportModalOpen}
-></ExportModal>
+<ExportModal ColorPalette={exportPalette} bind:isModalOpen={isExportModalOpen}></ExportModal>

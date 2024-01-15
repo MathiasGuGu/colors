@@ -102,8 +102,6 @@ export const constructTailwindExport = (color: ColorPalette, option: string = 'h
         `;
 	}
 
-	console.log(exportString);
-
 	let TailwindExportString = `
         extend: {
             colors: {

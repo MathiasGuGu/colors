@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { cn } from '$lib/utils';
-	import { Sparkle, ChevronDown, ChevronUp } from 'lucide-svelte';
+	import { Sparkles, ChevronDown, ChevronUp } from 'lucide-svelte';
 
-	let isOpen = true;
+	let isOpen = false;
 
 	interface dropdownOption {
 		id: string;
@@ -68,7 +68,7 @@
 				>
 					{option.value}
 					{#if option.value !== 'random'}
-						<Sparkle size={16} class="text-purple-600" />
+						<Sparkles size={16} class="text-purple-600" />
 					{/if}
 				</button>
 			{/each}
