@@ -26,19 +26,6 @@
 		therefor, the different parts of the dashboard need to have checks to see if the color exists or not.
 		if it does not, it will either have to be another color, hidden or disabled.
 	*/
-
-	$: console.log(
-		backgroundColor,
-		backgroundContent,
-		primaryColor,
-		primaryContent,
-		secondaryColor,
-		secondaryContent,
-		tertiaryColor,
-		tertiaryContent,
-		quadColor,
-		quadContent
-	);
 </script>
 
 <div class="w-full h-auto flex items-center justify-center">

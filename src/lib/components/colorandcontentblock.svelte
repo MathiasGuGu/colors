@@ -8,7 +8,7 @@
 		darkest: string;
 	}
 
-	export let lock: boolean = false;
+	export let lock: boolean;
 	export let name: string;
 	export let primary: string;
 	export let content: colorContent;
@@ -32,9 +32,12 @@
 		<p>{primary}</p>
 
 		<button
+			on:click={() => {
+				lock = !lock;
+			}}
 			class="absolute top-2 right-3 w-6 h-6 flex items-center justify-center hover:bg-black hover:bg-opacity-10 rounded-lg"
 		>
-			{#if lock}
+			{#if !lock}
 				<Unlock size={16} />
 			{:else}
 				<Lock size={16} />
